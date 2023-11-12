@@ -1,29 +1,49 @@
-import tkinter as tk
+from PyQt6.QtWidgets import QApplication, QMainWindow, QComboBox, QLineEdit, QVBoxLayout, QWidget
+from PyQt6.QtCore import Qt
 
-def update_entry(*args):
-    selected_option = variable.get()
-    entry_var.set(f"Option chosen: {selected_option}")
+class GymTrackerApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-root = tk.Tk()
-root.title("Tkinter OptionMenu Example")
+        self.setWindowTitle("Gym Progress Tracker")
+        self.setGeometry(100, 100, 400, 250)
 
-# Create a StringVar to store the selected option
-variable = tk.StringVar(root)
-variable.set("Option 1")  # Set the default option
+        # Exercise variables
+        self.exercise_var = None  # You can add these as needed
+        self.sets_var = None
+        self.reps_var = None
+        self.weight_var = None
 
-# Create an OptionMenu with three options
-option_menu = tk.OptionMenu(root, variable, "Option 1", "Option 2", "Option 3")
-option_menu.pack(pady=10)
+        # Create widgets
+        self.create_widgets()
 
-# Create an Entry widget
-entry_var = tk.StringVar()
-entry = tk.Entry(root, textvariable=entry_var, state='readonly', width=30)
-entry.pack(pady=10)
+    def create_widgets(self):
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
 
-# Set up a trace on the variable to call the update_entry function when the option changes
-variable.trace("w", update_entry)
+        layout = QVBoxLayout(central_widget)
 
-# Call the update_entry function to initialize the entry text
-update_entry()
+        def update_entry(index):
+            selected_option = exercise_combobox.currentText()
+            entry_line_edit.setText(f"Option chosen: {selected_option}")
 
-root.mainloop()
+        # Create a ComboBox with three options
+        exercise_combobox = QComboBox(self)
+        exercise_combobox.addItems(["Squats", "Deadlifts", "Body Fat"])
+        exercise_combobox.setCurrentText("Hello")  # Set the default option
+        exercise_combobox.currentIndexChanged.connect(update_entry)
+        layout.addWidget(exercise_combobox)
+
+        # Create a LineEdit widget
+        entry_line_edit = QLineEdit(self)
+        entry_line_edit.setReadOnly(True)
+        layout.addWidget(entry_line_edit)
+
+        # Call the update_entry function to initialize the entry text
+        update_entry(0)
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = GymTrackerApp()
+    window.show()
+    app.exec()
