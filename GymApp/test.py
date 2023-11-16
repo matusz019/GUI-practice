@@ -1,49 +1,66 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QComboBox, QLineEdit, QVBoxLayout, QWidget
-from PyQt6.QtCore import Qt
+import tkinter as tk
 
-class GymTrackerApp(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle("Gym Progress Tracker")
-        self.setGeometry(100, 100, 400, 250)
+class GymTrackerApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Gym Progress Tracker")
+        self.master.geometry("400x300")
 
         # Exercise variables
-        self.exercise_var = None  # You can add these as needed
-        self.sets_var = None
-        self.reps_var = None
-        self.weight_var = None
+        self.exercise_var = tk.StringVar()
+        self.sets_var = tk.IntVar()
+        self.reps_var = tk.IntVar()
+        self.weight_var = tk.DoubleVar()
 
         # Create widgets
         self.create_widgets()
 
     def create_widgets(self):
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
+        # Create a label for exercise
+        exerciseLabel = tk.Label(self.master, text="Exercise")
+        exerciseLabel.grid(row=0, column=0, padx=10, pady=10)
 
-        layout = QVBoxLayout(central_widget)
+        # Create a StringVar to store the selected option
+        self.variable = tk.StringVar(self.master)
+        self.variable.set("Option")  # Set the default option
 
-        def update_entry(index):
-            selected_option = exercise_combobox.currentText()
-            entry_line_edit.setText(f"Option chosen: {selected_option}")
+        # Create an OptionMenu with multiple options
+        option_menu = tk.OptionMenu(self.master, self.variable, "Squats", "Deadlifts", "Body Fat", "Bench Press", "Weight")
+        option_menu.grid(row=0, column=1, padx=10, pady=10)
 
-        # Create a ComboBox with three options
-        exercise_combobox = QComboBox(self)
-        exercise_combobox.addItems(["Squats", "Deadlifts", "Body Fat"])
-        exercise_combobox.setCurrentText("Hello")  # Set the default option
-        exercise_combobox.currentIndexChanged.connect(update_entry)
-        layout.addWidget(exercise_combobox)
+        # Set up a trace on the variable to call the update_entry function when the option changes
+        self.variable.trace("w", self.update_entry)
 
-        # Create a LineEdit widget
-        entry_line_edit = QLineEdit(self)
-        entry_line_edit.setReadOnly(True)
-        layout.addWidget(entry_line_edit)
+        # Initialize Entry widget
+        self.entry_var = tk.StringVar()
 
-        # Call the update_entry function to initialize the entry text
-        update_entry(0)
+        # Initialize kgEntry and kgLabel as class attributes
+        self.kgEntry = tk.Entry(self.master, width=20)
+        self.kgLabel = tk.Label(self.master, text="kg")
+        self.percentEntry = tk.Entry(self.master, width=20)
+        self.percentLabel = tk.Label(self.master, text="%")
+
+    def update_entry(self, *args):
+        selected_option = self.variable.get()
+        self.entry_var.set(f"Option chosen: {selected_option}")
+
+        if selected_option in ("Squats", "Deadlifts", "Bench Press", "Weight"):
+
+            
+
+            self.kgEntry.delete(0, tk.END)
+            self.kgEntry.insert(tk.END, "Enter the weight")
+            self.kgEntry.grid(row=1, column=0, padx=(10, 0))
+            self.kgLabel.grid(row=1, column=1, sticky='W')
+        elif selected_option == "Body Fat":
+            self.kgEntry.grid_forget()
+            self.kgLabel.grid_forget()
+            self.percentEntry.insert(tk.END, "Enter body fat")
+            self.percentEntry.grid(row=2, column=0, padx=(10, 0))
+            self.percentLabel.grid(row=2, column=1, sticky='W')
 
 if __name__ == "__main__":
-    app = QApplication([])
-    window = GymTrackerApp()
-    window.show()
-    app.exec()
+    root = tk.Tk()
+    app = GymTrackerApp(root)
+    root.mainloop()
+
