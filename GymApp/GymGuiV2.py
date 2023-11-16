@@ -19,7 +19,7 @@ class GymTrackerApp:
 
         self.options = ["Squats", "Deadlifts", "Bench Press", "Weight", "Body Fat"]
 
-        # Create widgets
+        # Create widgets and database
         self.create_widgets()
         self.create_database()
 
@@ -48,6 +48,7 @@ class GymTrackerApp:
         self.percentEntry = tk.Entry(self.master, width=20)
         self.percentLabel = tk.Label(self.master, text="%")
 
+    # Update labels and entries based on option selected in option menu
     def update_entry(self, *args):
         selected_option = self.variable.get()
         self.entry_var.set(f"Option chosen: {selected_option}")
